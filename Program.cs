@@ -17,8 +17,18 @@ namespace AutoLogDataReader
 
             using (SqlConnection connection = new SqlConnection())
             {
-                connection.ConnectionString = @"Data Source =.; Initial Catalog = AutoLog; Integrated Security = True";
+                var stringBuilder = new SqlConnectionStringBuilder
+                {
+                    InitialCatalog = "AutoLog",
+                    DataSource = @".",
+                    ConnectTimeout = 30,
+                    IntegratedSecurity = true
+                };
+
+                connection.ConnectionString = stringBuilder.ConnectionString;
                 connection.Open();
+                ShowConnectionStatus(connection);
+
 
                 string sql = "Select * From Inventory";
                 SqlCommand command = new SqlCommand(sql, connection);
@@ -35,6 +45,14 @@ namespace AutoLogDataReader
             
             Console.WriteLine("\n Done");
             Console.ReadLine();
+        }
+
+        public static void ShowConnectionStatus(SqlConnection connection)
+        {
+            Console.WriteLine($"Database location: {connection.DataSource}");
+            Console.WriteLine($"Database name: {connection.Database}");
+            Console.WriteLine($"Database timeout: {connection.ConnectionTimeout}");
+            Console.WriteLine($"Database state: {connection.State}");
         }
     }
 }
