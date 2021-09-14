@@ -37,7 +37,11 @@ namespace AutoLogDataReader
                 {
                     while (dataReader.Read())
                     {
-                        Console.WriteLine($"-> Make: {dataReader["Make"]}, PetName: {dataReader["PetName"]}, Color: {dataReader["Color"]}");
+                        for (int i = 0; i < dataReader.FieldCount; i++)
+                        {
+                            Console.WriteLine($"{dataReader.GetName(i)} = {dataReader.GetValue(i)}");
+                        }
+                        Console.WriteLine();
                     }
                 }
 
