@@ -107,5 +107,57 @@ namespace AutoLogDAL
 
             CloseConnection();
         }
+
+        public void InsertAuto(Car car)
+        {
+            OpenConnection();
+
+            string sql = $"Insert Into Inventory (Make, Color, PetName) Values ('{car.Make}', '{car.Color}', '{car.PetName}')";
+            using (SqlCommand command = new SqlCommand(sql, sqlConnection))
+            {
+                command.CommandType = CommandType.Text;
+                command.ExecuteNonQuery();
+            }
+
+            CloseConnection();
+        }
+
+        public void DeleteCar(int id)
+        {
+            OpenConnection();
+
+            string sql = $"Delete From Inventory where CarId = '{id}'";
+            using (SqlCommand command = new SqlCommand(sql, sqlConnection))
+            {
+                try
+                {
+                    command.CommandType = CommandType.Text;
+                    command.ExecuteNonQuery();
+                }
+                catch (SqlException ex)
+                {
+                    Exception error = new Exception("Sorry! THat car is on order!", ex);
+
+                    throw error;
+                }
+                
+            }
+
+            CloseConnection();
+        }
+
+        public void UpdatePetName(int id, string newPetName)
+        {
+            OpenConnection();
+
+            string sql = $"Update Inventory Set PetName = '{newPetName}' Where CarId = '{id}'";
+            using (SqlCommand command = new SqlCommand(sql, sqlConnection))
+            {
+                command.CommandType = CommandType.Text;
+                command.ExecuteNonQuery();
+            }
+
+            CloseConnection();
+        }
     }
 }
