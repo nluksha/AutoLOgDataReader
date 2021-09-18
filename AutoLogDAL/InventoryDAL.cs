@@ -184,5 +184,42 @@ namespace AutoLogDAL
 
             CloseConnection();
         }
+
+        public string LookUpPetName(int carId)
+        {
+            OpenConnection();
+
+            string carPetName;
+            using (SqlCommand command = new SqlCommand("GetPetName", sqlConnection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.AddRange(
+                    new SqlParameter[]
+                    {
+                        new SqlParameter
+                        {
+                            ParameterName = "@CarId",
+                            SqlDbType = SqlDbType.Int,
+                            Value = carId,
+                            Direction = ParameterDirection.Input // Important!
+                        },
+                        new SqlParameter
+                        {
+                            ParameterName = "@petName",
+                            SqlDbType = SqlDbType.Char,
+                            Size = 10,
+                            Direction = ParameterDirection.Output // Important!
+                        }
+                    });
+
+                command.ExecuteNonQuery();
+                carPetName = (string)command.Parameters["@petName"].Value;
+            }
+
+            CloseConnection();
+
+            return carPetName;
+        }
     }
 }

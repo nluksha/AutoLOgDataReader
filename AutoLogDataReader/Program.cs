@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
+using AutoLogDAL;
+using AutoLogDAL.Models;
 
 namespace AutoLogDataReader
 {
@@ -14,7 +16,7 @@ namespace AutoLogDataReader
         {
             Console.WriteLine("AutoLogDataReader \n");
 
-
+            /*
             using (SqlConnection connection = new SqlConnection())
             {
                 var stringBuilder = new SqlConnectionStringBuilder
@@ -45,6 +47,15 @@ namespace AutoLogDataReader
                     }
                 }
 
+            }
+            */
+
+            InventoryDAL dal = new InventoryDAL();
+            var list = dal.GetAllInventory();
+
+            foreach (var item in list)
+            {
+                Console.WriteLine($"{item.CarId} | {item.Make} | {item.Color} | {item.PetName}");
             }
             
             Console.WriteLine("\n Done");
