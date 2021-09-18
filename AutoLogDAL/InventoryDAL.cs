@@ -77,7 +77,7 @@ namespace AutoLogDAL
                 command.CommandType = CommandType.Text;
                 SqlDataReader dataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
 
-                while(dataReader.Read())
+                while (dataReader.Read())
                 {
                     car = new Car
                     {
@@ -112,10 +112,35 @@ namespace AutoLogDAL
         {
             OpenConnection();
 
-            string sql = $"Insert Into Inventory (Make, Color, PetName) Values ('{car.Make}', '{car.Color}', '{car.PetName}')";
+            string sql = $"Insert Into Inventory (Make, Color, PetName) Values (@Make, @Color, @PetName)";
             using (SqlCommand command = new SqlCommand(sql, sqlConnection))
             {
-                command.CommandType = CommandType.Text;
+                command.Parameters.AddRange(
+                    new SqlParameter[]
+                    {
+                        new SqlParameter
+                        {
+                            ParameterName = "@Make",
+                            Value = car.Make,
+                            SqlDbType = SqlDbType.Char,
+                            Size = 10
+                        },
+                        new SqlParameter
+                        {
+                            ParameterName = "@Color",
+                            Value = car.Color,
+                            SqlDbType = SqlDbType.Char,
+                            Size = 10
+                        },
+                        new SqlParameter
+                        {
+                            ParameterName = "@PetName",
+                            Value = car.PetName,
+                            SqlDbType = SqlDbType.Char,
+                            Size = 10
+                        }
+                    });
+
                 command.ExecuteNonQuery();
             }
 
@@ -140,7 +165,7 @@ namespace AutoLogDAL
 
                     throw error;
                 }
-                
+
             }
 
             CloseConnection();
