@@ -57,7 +57,9 @@ namespace AutoLogDataReader
             {
                 Console.WriteLine($"{item.CarId} | {item.Make} | {item.Color} | {item.PetName}");
             }
-            
+
+            MoveCustomer(dal);
+
             Console.WriteLine("\n Done");
             Console.ReadLine();
         }
@@ -68,6 +70,16 @@ namespace AutoLogDataReader
             Console.WriteLine($"Database name: {connection.Database}");
             Console.WriteLine($"Database timeout: {connection.ConnectionTimeout}");
             Console.WriteLine($"Database state: {connection.State}");
+        }
+
+        public static void MoveCustomer(InventoryDAL dal)
+        {
+            Console.WriteLine("--- Transaction Test ---");
+
+            bool throwex = true;
+            dal.ProcessCreditRisk(throwex, 1);
+
+            Console.WriteLine("--- Transaction Test Done ---");
         }
     }
 }

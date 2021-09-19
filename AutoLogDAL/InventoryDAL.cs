@@ -221,5 +221,63 @@ namespace AutoLogDAL
 
             return carPetName;
         }
+
+        public void ProcessCreditRisk(bool throwEx, int custId)
+        {
+            OpenConnection();
+
+            string fName, lName;
+
+            var cmdSelect = new SqlCommand($"Select * From Customers Where CustId = {custId}", sqlConnection);
+
+            using (var dataReader = cmdSelect.ExecuteReader())
+            {
+                if (dataReader.HasRows)
+                {
+                    dataReader.Read();
+
+                    fName = (string)dataReader["FirstName"];
+                    lName = (string)dataReader["LastName"];
+                }
+                else
+                {
+                    CloseConnection();
+
+                    return;
+                }
+            }
+
+            var cmdRemove = new SqlCommand($"Delete from Customers Where CustId = {custId}", sqlConnection);
+            var cmdInsert = new SqlCommand($"Insert Into CreditRisks (FirstName, LastName) Values ('{fName}', '{lName}')", sqlConnection);
+
+            SqlTransaction transaction = null;
+
+            try
+            {
+                transaction = sqlConnection.BeginTransaction();
+
+                cmdRemove.Transaction = transaction;
+                cmdInsert.Transaction = transaction;
+
+                cmdRemove.ExecuteNonQuery();
+                cmdInsert.ExecuteNonQuery();
+
+                if (throwEx)
+                {
+                    throw new Exception("Sorry! Database error ...");
+                }
+
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                transaction?.Rollback();
+            }
+            finally
+            {
+                CloseConnection();
+            }
+        }
     }
 }
